@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Family Economics — Domestic Labor & Financial Equity</title>
+<meta name="description" content="An interactive Family Economics calculator for recognizing domestic contribution, planning household finances, and building financial autonomy.">
+<style>
+:root{
+  --bg:#071014;--panel:#0d1a1f;--panel2:#10242a;--text:#edf5f3;--muted:#9bb0b0;
+  --line:#244149;--accent:#9be7c1;--accent2:#72c7df;--warm:#e9c878;--danger:#f28c8c;
+  --max:1180px;
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(circle at 50% 0,#14313a 0,#071014 42%,#05090b 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif;line-height:1.55}
+a{color:inherit;text-decoration:none}.wrap{width:min(100% - 32px,var(--max));margin:auto}
+nav{position:sticky;top:0;z-index:10;background:rgba(7,16,20,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.navin{display:flex;justify-content:space-between;align-items:center;min-height:62px;gap:20px}.brand{font-weight:800;letter-spacing:.08em}.brand span{color:var(--accent)}
+.navlinks{display:flex;gap:18px;flex-wrap:wrap;font-size:.9rem;color:var(--muted)}.navlinks a:hover{color:var(--text)}
+.hero{min-height:72vh;display:grid;align-items:center;padding:80px 0 60px;position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;width:520px;height:520px;border-radius:50%;border:1px solid rgba(155,231,193,.16);left:50%;top:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 80px rgba(155,231,193,.025),0 0 0 160px rgba(114,199,223,.018)}
+.kicker{color:var(--accent);font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700}
+h1{font-size:clamp(3rem,8vw,7.5rem);line-height:.88;letter-spacing:-.06em;max-width:900px;margin:18px 0}
+.lead{font-size:clamp(1.05rem,2vw,1.35rem);max-width:720px;color:#c5d5d4}
+.quote{border-left:2px solid var(--accent);padding-left:18px;color:var(--muted);max-width:700px;margin:28px 0}
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:11px 16px;border-radius:999px;cursor:pointer;font-weight:700}
+.btn.primary{background:var(--accent);color:#092017;border-color:var(--accent)}.btn:hover{filter:brightness(1.08)}
+section{padding:80px 0}.section-head{display:flex;justify-content:space-between;gap:30px;align-items:end;margin-bottom:28px}
+h2{font-size:clamp(2rem,4vw,4rem);line-height:1;margin:0;letter-spacing:-.04em}.sub{color:var(--muted);max-width:600px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.card{background:linear-gradient(145deg,rgba(16,36,42,.96),rgba(9,21,25,.96));border:1px solid var(--line);border-radius:20px;padding:22px}.span4{grid-column:span 4}.span6{grid-column:span 6}.span8{grid-column:span 8}.span12{grid-column:span 12}
+.metric{font-size:2rem;font-weight:800;margin-top:8px}.muted{color:var(--muted)}.small{font-size:.86rem}
+label{display:block;font-size:.83rem;color:var(--muted);margin:0 0 6px}
+input,select{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:10px;background:#081317;color:var(--text);font-size:1rem;outline:none}
+input:focus,select:focus{border-color:var(--accent)}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.formgrid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
+.pill{display:inline-flex;border:1px solid var(--line);padding:4px 9px;border-radius:999px;font-size:.75rem;color:var(--muted)}
+table{width:100%;border-collapse:collapse}th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}
+.progress{height:9px;background:#071014;border:1px solid var(--line);border-radius:99px;overflow:hidden}.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));width:0}
+.big{font-size:clamp(2.2rem,5vw,4.5rem);font-weight:800;letter-spacing:-.05em}.positive{color:var(--accent)}.negative{color:var(--danger)}.warm{color:var(--warm)}
+.service{display:grid;grid-template-columns:1fr 120px 120px;gap:10px;align-items:end;padding:12px 0;border-bottom:1px solid var(--line)}
+.service:last-child{border-bottom:0}.remove{background:transparent;border:0;color:var(--danger);cursor:pointer}
+footer{padding:60px 0 100px;border-top:1px solid var(--line);color:var(--muted)}
+.sticky-result{position:sticky;top:82px}
+.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:25px}.step{padding:16px;border-top:2px solid var(--line)}.step b{display:block;color:var(--accent);font-size:.78rem;letter-spacing:.1em}
+@media(max-width:800px){.span4,.span6,.span8{grid-column:span 12}.formgrid,.formgrid.three{grid-template-columns:1fr}.navlinks{display:none}.hero{min-height:70vh;padding-top:60px}.service{grid-template-columns:1fr 1fr}.service .remove{grid-column:span 2;text-align:right}.timeline{grid-template-columns:1fr}.section-head{display:block}.section-head .btn{margin-top:16px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<nav><div class="wrap navin"><a class="brand" href="#top">FAMILY<span>ECONOMICS</span></a><div class="navlinks"><a href="#idea">Idea</a><a href="#calculator">Calculator</a><a href="#budget">Budget</a><a href="#ledger">Ledger</a><a href="#charter">Charter</a></div></div></nav>
+
+<main id="top">
+<section class="hero"><div class="wrap">
+<div class="kicker">Domestic Labor · Financial Autonomy · Cooperative Family</div>
+<h1>The family is an economy.</h1>
+<p class="lead">Measure what is usually invisible. Recognize domestic contribution. Create personal financial freedom. Reduce the expectation that one income generator must carry the entire household.</p>
+<p class="quote">“If the family would otherwise have to pay someone to do it, the work has economic replacement value.”</p>
+<div class="row"><a class="btn primary" href="#calculator">Enter your family →</a><a class="btn" href="#charter">Read the charter</a></div>
+</div></section>
+
+<section id="idea"><div class="wrap">
+<div class="section-head"><div><div class="kicker">01 / The proposition</div><h2>From dependency<br>to cooperation.</h2></div><p class="sub">This framework does not attempt to commercialize affection. It separates economic contribution, household production, care and personal financial autonomy so a family can discuss money without reducing people to money.</p></div>
+<div class="grid">
+<div class="card span4"><span class="pill">01 · VISIBILITY</span><h3>See the work</h3><p class="muted">Cooking, cleaning, childcare, planning, procurement, care and household administration become visible economic contributions.</p></div>
+<div class="card span4"><span class="pill">02 · RECOGNITION</span><h3>Value the work</h3><p class="muted">Use replacement-cost references as a measurement tool, while remembering that household value is not automatically cash income.</p></div>
+<div class="card span4"><span class="pill">03 · AUTONOMY</span><h3>Protect freedom</h3><p class="muted">Give adults defined personal financial space so domestic contribution does not automatically mean financial dependence.</p></div>
+</div>
+</div></section>
+
+<section id="calculator"><div class="wrap">
+<div class="section-head"><div><div class="kicker">02 / Family calculator</div><h2>Build your household.</h2></div><p class="sub">Start with the actual people, income and services in your family. The calculator produces a planning picture—not a judgment about who is more valuable.</p></div>
+<div class="grid">
+<div class="card span8">
+<h3>Household profile</h3>
+<div class="formgrid">
+<div><label>Family name / scenario</label><input id="familyName" value="Our Family"></div>
+<div><label>Number of people</label><input id="people" type="number" min="1" max="30" value="3"></div>
+<div><label>External household income / month (BDT)</label><input id="income" type="number" min="0" value="60000"></div>
+<div><label>Existing domestic compensation / month (BDT)</label><input id="comp" type="number" min="0" value="10000"></div>
+</div>
+<h3 style="margin-top:28px">Domestic services</h3>
+<div id="services"></div>
+<div class="row" style="margin-top:15px"><button class="btn" id="addService" type="button">+ Add custom service</button><button class="btn primary" id="calculate" type="button">Calculate family economy</button></div>
+</div>
+<div class="card span4 sticky-result">
+<div class="kicker">Live result</div><div id="totalValue" class="big">৳0</div><div class="muted">recognized domestic replacement value</div>
+<hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
+<div class="row between"><span class="muted">External cash income</span><b id="outIncome">৳0</b></div>
+<div class="row between"><span class="muted">Domestic value</span><b id="outDomestic">৳0</b></div>
+<div class="row between"><span class="muted">Compensation</span><b id="outComp">৳0</b></div>
+<div style="margin-top:20px"><div class="row between small"><span>Compensation / external income</span><b id="ratio">0%</b></div><div class="progress"><i id="ratioBar"></i></div></div>
+<p id="status" class="small muted" style="margin-top:18px">Enter your family data and calculate.</p>
+</div>
+</div>
+</div></section>
+
+<section id="budget"><div class="wrap">
+<div class="section-head"><div><div class="kicker">03 / Solvency planner</div><h2>Does the family<br>balance?</h2></div><p class="sub">A compensation plan must live inside the family's actual cash flow. Domestic replacement value measures contribution; the budget decides what can safely be paid.</p></div>
+<div class="grid">
+<div class="card span6">
+<h3>Monthly shared expenses</h3>
+<div id="expenses"></div>
+<button class="btn" id="addExpense" type="button">+ Add expense</button>
+</div>
+<div class="card span6">
+<h3>Solvency dashboard</h3>
+<div class="metric" id="cashBalance">৳0</div><div class="muted">cash remaining after shared expenses + domestic compensation</div>
+<div style="margin-top:25px"><div class="row between"><span>Essentials + compensation</span><b id="expenseRate">0%</b></div><div class="progress"><i id="expenseBar"></i></div></div>
+<div class="grid" style="margin-top:20px">
+<div class="card span6"><div class="small muted">Recommended reserve target</div><div id="reserve">৳0</div></div>
+<div class="card span6"><div class="small muted">Per-person income equivalent</div><div id="perPerson">৳0</div></div>
+</div>
+<p class="small muted">A positive balance is not proof that a household is financially secure; debt, irregular expenses, health costs and future goals also matter.</p>
+</div>
+</div>
+</div></section>
+
+<section id="ledger"><div class="wrap">
+<div class="section-head"><div><div class="kicker">04 / Family work ledger</div><h2>Contribution<br>without hierarchy.</h2></div><p class="sub">Record who does what without declaring that one kind of work is morally superior to another.</p></div>
+<div class="card">
+<div class="formgrid three">
+<div><label>Member</label><input id="member" placeholder="e.g. Wife"></div>
+<div><label>External income</label><input id="memberIncome" type="number" min="0" value="0"></div>
+<div><label>Domestic compensation</label><input id="memberComp" type="number" min="0" value="0"></div>
+</div>
+<div class="formgrid" style="margin-top:14px">
+<div><label>Primary contribution</label><select id="role"><option>External employment</option><option>Cooking / food</option><option>Cleaning / housekeeping</option><option>Childcare</option><option>Eldercare / dependent care</option><option>Household administration</option><option>Procurement / errands</option><option>Mixed contribution</option></select></div>
+<div><label>Note</label><input id="memberNote" placeholder="Hours, responsibilities, circumstances..."></div>
+</div>
+<button class="btn primary" id="addMember" type="button" style="margin-top:15px">Add to family ledger</button>
+<table style="margin-top:25px"><thead><tr><th>Member</th><th>Role</th><th>External income</th><th>Domestic compensation</th><th>Note</th></tr></thead><tbody id="memberRows"></tbody></table>
+</div>
+</div></section>
+
+<section id="charter"><div class="wrap">
+<div class="section-head"><div><div class="kicker">05 / The charter</div><h2>Six movements<br>toward equity.</h2></div><p class="sub">A family can adopt the framework gradually. It is a conversation and accounting practice, not a compulsory contract.</p></div>
+<div class="timeline">
+<div class="step"><b>01</b><strong>VISIBILITY</strong><p class="small muted">List the work that keeps the household alive.</p></div>
+<div class="step"><b>02</b><strong>RECOGNITION</strong><p class="small muted">Estimate replacement value without pretending it is new cash.</p></div>
+<div class="step"><b>03</b><strong>ACCOUNTING</strong><p class="small muted">Separate family money from personal money.</p></div>
+<div class="step"><b>04</b><strong>COMPENSATION</strong><p class="small muted">Agree an affordable domestic work dividend.</p></div>
+<div class="step"><b>05</b><strong>AUTONOMY</strong><p class="small muted">Give adults defined personal financial space.</p></div>
+</div>
+<div class="card" style="margin-top:25px">
+<h3>The cooperative principle</h3>
+<p style="font-size:1.2rem">“Income is contribution—not ownership of the family.”</p>
+<p class="muted">The objective is a household that can recognize work, distribute responsibility, maintain solvency, protect individual dignity and allow people of different ages and circumstances to contribute according to capacity.</p>
+<div class="row"><button class="btn primary" id="print" type="button">Print / Save family plan</button><button class="btn" id="reset" type="button">Reset demo</button></div>
+</div>
+</div></section>
+</main>
+
+<footer><div class="wrap"><strong>FAMILY ECONOMICS</strong><p>Domestic Labor · Care · Financial Autonomy · Cooperative Family</p><p class="small">Prototype concept: an educational planning framework. Market rates should be adapted to local conditions and updated regularly.</p></div></footer>
+
+<script>
+(function(){
+const serviceDefaults=[
+["Cooking / food management",18000],["Cleaning / housekeeping",12000],["Laundry & clothing",4500],
+["Childcare",20000],["Elder / dependent care",20000],["Grocery / procurement",3500],
+["Household administration",5000],["Household cognitive labor",4000]
+];
+const expenseDefaults=[["Rent / housing",15000],["Food & groceries",18000],["Utilities & internet",5000],["Education / child",4000],["Transport",4000],["Healthcare",3000],["Household supplies",2500],["Savings / reserve",5000]];
+const $=id=>document.getElementById(id);
+const money=n=>"৳"+Math.round(Number(n)||0).toLocaleString("en-BD");
+function addService(name="",rate=0){
+ const wrap=document.createElement("div");wrap.className="service";
+ wrap.innerHTML=`<div><label>Service</label><input class="sname" value="${name.replace(/"/g,"&quot;")}"></div><div><label>Reference BDT</label><input class="srate" type="number" min="0" value="${rate}"></div><div><label>Workload ×</label><input class="sfactor" type="number" min="0" max="5" step=".1" value="1"></div><button type="button" class="remove">remove</button>`;
+ $("services").appendChild(wrap);
+ wrap.querySelector(".remove").addEventListener("click",()=>{wrap.remove();calculate()});
+}
+serviceDefaults.forEach(x=>addService(...x));
+function addExpense(name="",value=0){
+ const wrap=document.createElement("div");wrap.className="formgrid" style.marginTop="12px";
+ wrap.innerHTML=`<div><input class="ename" value="${name.replace(/"/g,"&quot;")}"></div><div><input class="eval" type="number" min="0" value="${value}"></div>`;
+ $("expenses").appendChild(wrap);
+ wrap.querySelector(".eval").addEventListener("input",calculate);
+}
+expenseDefaults.forEach(x=>addExpense(...x));
+function calculate(){
+ const income=Math.max(0,Number($("income").value)||0);
+ const comp=Math.max(0,Number($("comp").value)||0);
+ let domestic=0;
+ document.querySelectorAll("#services .service").forEach(r=>{
+   const rate=Math.max(0,Number(r.querySelector(".srate").value)||0);
+   const factor=Math.max(0,Number(r.querySelector(".sfactor").value)||0);
+   domestic+=rate*factor;
+ });
+ let expenses=0;
+ document.querySelectorAll("#expenses .eval").forEach(e=>expenses+=Math.max(0,Number(e.value)||0));
+ const balance=income-expenses-comp;
+ const ratio=income?comp/income*100:0;
+ $("totalValue").textContent=money(domestic);
+ $("outIncome").textContent=money(income);
+ $("outDomestic").textContent=money(domestic);
+ $("outComp").textContent=money(comp);
+ $("ratio").textContent=Math.round(ratio)+"%";
+ $("ratioBar").style.width=Math.min(100,ratio)+"%";
+ $("cashBalance").textContent=money(balance);
+ $("cashBalance").className="metric "+(balance<0?"negative":"positive");
+ $("expenseRate").textContent=(income?Math.min(999,(expenses+comp)/income*100):0).toFixed(0)+"%";
+ $("expenseBar").style.width=Math.min(100,income?((expenses+comp)/income*100):0)+"%";
+ $("reserve").textContent=money(expenses*3);
+ const people=Math.max(1,Number($("people").value)||1);
+ $("perPerson").textContent=money(income/people);
+ $("status").textContent=balance<0?"The proposed cash plan exceeds the entered external income. Reduce expenses, compensation, or increase household income before adopting it.":"The entered cash plan remains within the external-income envelope. Review irregular costs and savings before finalizing.";
+}
+document.querySelectorAll("input").forEach(i=>i.addEventListener("input",calculate));
+$("addService").addEventListener("click",()=>addService("Custom household service",0));
+$("addExpense").addEventListener("click",()=>addExpense("New expense",0));
+$("calculate").addEventListener("click",calculate);
+$("addMember").addEventListener("click",()=>{
+ const n=$("member").value.trim(); if(!n)return;
+ const tr=document.createElement("tr");
+ [n,$("role").value,money($("memberIncome").value),money($("memberComp").value),$("memberNote").value].forEach(v=>{const td=document.createElement("td");td.textContent=v;tr.appendChild(td)});
+ $("memberRows").appendChild(tr);
+ $("member").value="";$("memberIncome").value=0;$("memberComp").value=0;$("memberNote").value="";
+});
+$("print").addEventListener("click",()=>window.print());
+$("reset").addEventListener("click",()=>{location.reload()});
+calculate();
+})();
+</script>
+</body>
+</html>
